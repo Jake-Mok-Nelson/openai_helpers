@@ -1,6 +1,7 @@
 import argparse
 
 from agent_creator import create_swarm_agent
+from generate_prompt import generate_prompt
 
 def main():
     parser = argparse.ArgumentParser(description="OpenAI Swarm Agent Manager")
@@ -12,8 +13,9 @@ def main():
     
     parser_swarm.set_defaults(func=lambda args: create_swarm_agent(args.goal, args.output))
 
-    # parser_prompt = subparsers.add_parser('improve-prompt', help='Improve a prompt')
-    # parser_prompt.set_defaults(func=improve_prompt)
+    parser_prompt = subparsers.add_parser('improve-prompt', help='Improve a prompt')
+    parser_prompt.add_argument('task_or_prompt', type=str, help='The task or prompt to improve')
+    parser_prompt.set_defaults(func=lambda args: print(generate_prompt(args.task_or_prompt)))
 
     args = parser.parse_args()
     if args.command:
