@@ -1,5 +1,4 @@
 import argparse
-import json
 
 from agent_creator import create_swarm_agent
 from generate_prompt import generate_prompt
