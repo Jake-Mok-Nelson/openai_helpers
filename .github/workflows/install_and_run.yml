@@ -2,6 +2,11 @@ name: Install and Run
 
 on:
   workflow_dispatch:
+    inputs:
+      description:
+        description: 'Agent description/goal'
+        required: true
+        type: string
 
 jobs:
   install-and-run:
@@ -18,9 +23,10 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: Run create-swarm-agent
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
-        python cli/main.py create-swarm-agent "Your goal here" --output print
+        python cli/main.py create-swarm-agent "${{ github.event.inputs.description }}" --output print
