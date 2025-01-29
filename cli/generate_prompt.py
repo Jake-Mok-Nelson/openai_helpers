@@ -3,11 +3,10 @@ from openai import OpenAI
 client = OpenAI()
 
 META_PROMPT = """
-Given a current prompt and a change description, produce a detailed system prompt to guide a language model in completing the task effectively.
+Given a current prompt, produce a detailed system prompt to guide a language model in completing the task effectively.
 
 Your final output will be the full corrected prompt verbatim. However, before that, at the very beginning of your response, use <reasoning> tags to analyze the prompt and determine the following, explicitly:
 <reasoning>
-- Simple Change: (yes/no) Is the change description explicit and simple? (If so, skip the rest of these questions.)
 - Reasoning: (yes/no) Does the current prompt use reasoning, analysis, or chain of thought? 
     - Identify: (max 10 words) if so, which section(s) utilize reasoning?
     - Conclusion: (yes/no) is the chain of thought used to determine a conclusion?
@@ -65,21 +64,35 @@ The final prompt you output should adhere to the following structure below. Do n
 
 [optional: edge cases, details, and an area to call or repeat out specific important considerations]
 [NOTE: you must start with a <reasoning> section. the immediate next token you produce should be <reasoning>]
+
 """.strip()
 
-def generate_prompt(task_or_prompt: str):
-  completion = client.chat.completions.create(
-      model="o1-mini",
-      messages=[
-          {
-              "role": "system",
-              "content": META_PROMPT,
-          },
-          {
-              "role": "user",
-              "content": "Task, Goal, or Current Prompt:\n" + task_or_prompt,
-          },
-      ],
-  )
-
-  return completion.choices[0].message.content
+def generate_prompt(task_or_prompt: str, model: str = "gpt-4o"):
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            max_tokens=2048,
+            messages=[
+                {
+                    "role": "developer",
+                    "content": META_PROMPT,
+                },
+                {
+                    "role": "user",
+                    "content": "Task, Goal, or Current Prompt:\n" + task_or_prompt,
+                },
+            ],
+        )
+        
+        # if reasoning tags are present, extract the reasoning section
+        response = response.choices[0].message.content
+        if "<reasoning>" in response:
+            reasoning_start = response.index("<reasoning>")
+            reasoning_end = response.index("</reasoning>")
+            reasoning = response[reasoning_start:reasoning_end + len("</reasoning>")]
+            response = response.replace(reasoning, "").strip()
+        print(response)
+            
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        exit(1)
