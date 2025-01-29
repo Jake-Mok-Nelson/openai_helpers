@@ -6,7 +6,7 @@ Misc tools for OpenAI
 
 This repository contains various tools and utilities for working with OpenAI's API. The primary functionality includes creating a new Swarm agent with a specified goal and output format, as well as generating prompts using OpenAI's API.
 
-**Warning:** Each function in this application uses the OpenAI Apis and may make multiple calls to an o1 model by default.
+**Warning:** Each function in this application uses the OpenAI Apis and may make multiple calls to an o1-mini model by default.
 You can override the model with the `--model` flag for most commands.
 
 
