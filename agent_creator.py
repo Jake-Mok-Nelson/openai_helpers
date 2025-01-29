@@ -3,24 +3,10 @@ import logging
 from openai import OpenAI
 
 import generate_prompt
+from shared import is_pre_o1
 client = OpenAI()
 
-   
-def save_agent_python_to_file(agent_name, code_template):
-   with open(f"{agent_name}.py", "w") as f:
-      f.write(code_template)
-   print(f"Agent code saved to {agent_name}.py")
 
-def save_agent_json_to_file(agent_name, json_response):
-   with open(f"{agent_name}.json", "w") as f:
-      f.write(json.dumps(json_response, indent=3))
-   print(f"Agent JSON saved to {agent_name}.json")
-
-def is_pre_o1(model: str):
-   if model.startswith("gpt-3") or model.startswith("gpt-4"):
-      logging.warning("The model you are using is pre-o1. I'll include a reasoning section in the prompt that doesn't apply after o1.")
-      return True
-   return False
 
 
 # Returns the new agent name and the Python code template
@@ -298,16 +284,7 @@ Create an agent named "[AgentName]" using the "[Model]" model. Instructions: "[I
       # merge the json response with the improved prompt
       json_response['instructions'] = improved_prompt
          
-
-      # Create the the template to output to file or print to stdout
-      python_code = create_python_agent_code(json_response)
-
-      if output == "json":
-         print(json.dumps(json_response, indent=3))
-      elif output == "python":
-         print(python_code)
-      else:
-         print(python_code)
+      return json_response
    except Exception as e:
       print(f"An error occurred: {e}")
       exit(1)

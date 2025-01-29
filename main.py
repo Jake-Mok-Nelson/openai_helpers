@@ -1,8 +1,35 @@
 import argparse
+import json
+import logging
 
-from agent_creator import create_swarm_agent
-from generate_prompt import generate_prompt_cmd
+from agent_creator import create_python_agent_code, create_swarm_agent
+from generate_prompt import generate_prompt
 
+# The CLI entrypoint to create a swarm agent
+def create_swarm_agent_cmd(goal: str, model: str, output: str):
+    try:
+      json_response = create_swarm_agent(goal, model)
+      python_code = create_python_agent_code(json_response)
+
+      if output == "json":
+         print(json.dumps(json_response, indent=3))
+      elif output == "python":
+         print(python_code)
+      else:
+         print(python_code)
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        exit(1)
+
+# The CLI entrypoint to generate a prompt
+def generate_prompt_cmd(task_or_prompt: str, model: str = "o1-mini"):
+    try :
+        response = generate_prompt.generate_prompt(task_or_prompt, model)
+        print(response)
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        exit(1)
+    
 
 def main():
     parser = argparse.ArgumentParser(description="OpenAI Swarm Agent Manager")
@@ -13,7 +40,7 @@ def main():
     parser_swarm.add_argument('goal', type=str, help='The goal of the agent')
     parser_swarm.add_argument('--output', type=str, choices=['json', 'python'], default='python', help='Output format')
     parser_swarm.add_argument('--model', type=str, default='o1-mini', help='Model to use for prompt generation')
-    parser_swarm.set_defaults(func=lambda args: create_swarm_agent(args.goal, args.model, args.output))
+    parser_swarm.set_defaults(func=lambda args: create_swarm_agent_cmd(args.goal, args.model, args.output))
 
     # Improve a prompt
     parser_prompt = subparsers.add_parser('create-prompt', help='Create or improve a prompt')

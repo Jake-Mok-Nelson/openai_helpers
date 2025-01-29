@@ -1,6 +1,8 @@
 import logging
 from openai import OpenAI
 
+from shared import is_pre_o1
+
 client = OpenAI()
 
 REASONING = """
@@ -74,18 +76,7 @@ The final prompt you output should adhere to the following structure below. Do n
 
 """.strip()
 
-def is_pre_o1(model: str):
-    return model.startswith("gpt-3") or model.startswith("gpt-4")
-
-def generate_prompt_cmd(task_or_prompt: str, model: str = "o1-mini"):
-    try :
-        response = generate_prompt(task_or_prompt, model)
-        print(response)
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
-        exit(1)
-    
-
+# Generate or improve a prompt for a given task or prompt
 def generate_prompt(task_or_prompt: str, model: str = "o1-mini"):
     # if the model starts with "gpt-3" or "gpt-4", we'll concatenate the reasoning section
     PROMPT = META_PROMPT
