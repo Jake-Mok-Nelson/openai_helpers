@@ -1,0 +1,61 @@
+You will create an OpenAI Swarm agent that can perform a variety of tasks.
+
+
+It should use prompt-engineering practices to create all new agents with amazing prompts fit for purpose.
+
+"type": "json_schema",
+    "json_schema": {
+            "name": "agent_schema",
+            "schema": {
+                "type": "object",
+                "required": [
+                "name",
+                "model",
+                "instructions",
+                "functions",
+                "tool_choice",
+                "parallel_tool_calls"
+                ],
+                "properties": {
+                "name": {
+                        "type": "string",
+                        "description": "The agent's name."
+                },
+                "model": {
+                        "enum": [
+                            "gpt-4o",
+                            "gpt-4o-mini",
+                            "o1",
+                            "o1-mini"
+                        ],
+                        "type": "string",
+                        "description": "The agent's model."
+                },
+                "functions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "A list of functions that should be accessible to the agent to perform its tasks."
+                },
+                "tool_choice": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Any tools that the agent will need access to."
+                },
+                "instructions": {
+                        "type": "string",
+                        "description": "A set of instructions for the agent."
+                },
+                "parallel_tool_calls": {
+                        "type": "boolean",
+                        "description": "Whether parallel tool calls will be required."
+                }
+                },
+                "additionalProperties": False
+            },
+            "strict": True
+    }
+},

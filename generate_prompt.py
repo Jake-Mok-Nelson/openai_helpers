@@ -1,9 +1,9 @@
+import logging
 from openai import OpenAI
 
 client = OpenAI()
 
-META_PROMPT = """
-Given a current prompt, produce a detailed system prompt to guide a language model in completing the task effectively.
+REASONING = """
 
 Your final output will be the full corrected prompt verbatim. However, before that, at the very beginning of your response, use <reasoning> tags to analyze the prompt and determine the following, explicitly:
 <reasoning>
@@ -21,6 +21,14 @@ Your final output will be the full corrected prompt verbatim. However, before th
 - Prioritization: (list) what 1-3 categories are the MOST important to address.
 - Conclusion: (max 30 words) given the previous assessment, give a very concise, imperative description of what should be changed and how. this does not have to adhere strictly to only the categories listed
 </reasoning>
+"""
+
+REASONING_CONT = """
+[NOTE: you must start with a <reasoning> section. the immediate next token you produce should be <reasoning>]
+"""
+
+META_PROMPT = """
+Given a current prompt, produce a detailed system prompt to guide a language model in completing the task effectively.
     
 # Guidelines
 
@@ -63,19 +71,26 @@ The final prompt you output should adhere to the following structure below. Do n
 # Notes [optional]
 
 [optional: edge cases, details, and an area to call or repeat out specific important considerations]
-[NOTE: you must start with a <reasoning> section. the immediate next token you produce should be <reasoning>]
 
 """.strip()
 
-def generate_prompt(task_or_prompt: str, model: str = "gpt-4o"):
+def is_pre_o1(model: str):
+    return model.startswith("gpt-3") or model.startswith("gpt-4")
+
+def generate_prompt(task_or_prompt: str, model: str = "o1-mini"):
+    # if the model starts with "gpt-3" or "gpt-4", we'll concatenate the reasoning section
+    PROMPT = META_PROMPT
+    if is_pre_o1(model):
+        logging.warning("The model you are using is pre-o1. I'll include a reasoning section in the prompt that doesn't apply after o1.")
+        PROMPT = REASONING + "\n\n" + PROMPT + "\n\n" + REASONING_CONT
     try:
         response = client.chat.completions.create(
             model=model,
-            max_tokens=2048,
+            temperature=1,
             messages=[
                 {
-                    "role": "developer",
-                    "content": META_PROMPT,
+                    "role": "user",
+                    "content": PROMPT,
                 },
                 {
                     "role": "user",
@@ -92,7 +107,7 @@ def generate_prompt(task_or_prompt: str, model: str = "gpt-4o"):
             reasoning = response[reasoning_start:reasoning_end + len("</reasoning>")]
             response = response.replace(reasoning, "").strip()
         print(response)
-            
+
     except Exception as e:
         print(f"An error occurred: {e}")
         exit(1)
