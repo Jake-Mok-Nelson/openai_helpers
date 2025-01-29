@@ -1,6 +1,8 @@
 import json
 import logging
 from openai import OpenAI
+
+import generate_prompt
 client = OpenAI()
 
    
@@ -266,7 +268,7 @@ Create an agent named "[AgentName]" using the "[Model]" model. Instructions: "[I
             },
          )
 
-         print(response.choices[0].message.parsed)
+         # print(response.choices[0].message.parsed)
       
       
       json_response = json.loads(response.choices[0].message.content)
@@ -277,6 +279,25 @@ Create an agent named "[AgentName]" using the "[Model]" model. Instructions: "[I
          except:
             print(f"Error: {json_response}")
             exit(1)
+            
+      agent_prompt_for_improvement = """
+      You are agent """ + json_response["name"] + """.
+      
+      Instructions: """ + json_response["instructions"] + """.
+      
+      The can use the following functions: """ + ", ".join(json_response["functions"]) + """
+      
+      And the following tools: """ + ", ".join(json_response["tool_choice"]) + """
+      """
+      
+      improved_prompt = generate_prompt.generate_prompt(agent_prompt_for_improvement, model)
+      if not improved_prompt:
+         logging.error("Failed to generate an improved prompt.")
+         exit(1)
+      
+      # merge the json response with the improved prompt
+      json_response['instructions'] = improved_prompt
+         
 
       # Create the the template to output to file or print to stdout
       python_code = create_python_agent_code(json_response)

@@ -1,7 +1,7 @@
 import argparse
 
 from agent_creator import create_swarm_agent
-from generate_prompt import generate_prompt
+from generate_prompt import generate_prompt_cmd
 
 
 def main():
@@ -21,7 +21,7 @@ def main():
     group.add_argument('--task', type=str, help='The task or prompt to improve')
     group.add_argument('--task-file', type=argparse.FileType('r'), help='File containing the task or prompt')
     parser_prompt.add_argument('--model', type=str, default='o1-mini', help='Model to use for prompt generation')
-    parser_prompt.set_defaults(func=lambda args: generate_prompt(args.task or args.task_file.read(), args.model))
+    parser_prompt.set_defaults(func=lambda args: generate_prompt_cmd(args.task or args.task_file.read(), args.model))
 
     args = parser.parse_args()
     if args.command:
