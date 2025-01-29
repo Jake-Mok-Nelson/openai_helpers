@@ -24,7 +24,7 @@ def create_swarm_agent_cmd(goal: str, model: str, output: str):
 # The CLI entrypoint to generate a prompt
 def generate_prompt_cmd(task_or_prompt: str, model: str = "o1-mini"):
     try :
-        response = generate_prompt.generate_prompt(task_or_prompt, model)
+        response = generate_prompt(task_or_prompt, model)
         print(response)
     except Exception as e:
         logging.error(f"An error occurred: {e}")
