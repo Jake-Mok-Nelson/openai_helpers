@@ -28,4 +28,4 @@ jobs:
         env:
             OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python ./main.py create-prompt "${{ github.event.inputs.task }}"
+          python ./main.py create-prompt --task "${{ github.event.inputs.task }}"
