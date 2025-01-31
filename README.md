@@ -1,80 +1,58 @@
-# openai_helpers
+# SwarmAgentCLI
 
-Misc tools for OpenAI
+## Overview
 
-## Description
+SwarmAgentCLI is a command-line interface tool designed to create, manage, and orchestrate swarm agents efficiently. It provides a suite of functionalities to streamline the deployment, monitoring, and interaction of swarm-based applications.
 
-This repository contains various tools and utilities for working with OpenAI's API. The primary functionality includes creating a new Swarm agent with a specified goal and output format, as well as generating prompts using OpenAI's API.
+## Functionalities
 
-**Warning:** Each function in this application uses the OpenAI Apis and may make multiple calls to an o1-mini model by default.
-You can override the model with the `--model` flag for most commands.
+- **Agent Creation**: Create agents with specific goals to automate various tasks.
+- **Swarm Design**: Design swarms containing multiple agents with cooperative objectives.
+- **Prompt Generation**: Generate or improve prompts for tasks effectively.
+- **Output Saving**: Save generated content or agent designs to files for future use.
+- **Exit Functionality**: Exit the CLI when operations are complete.
 
+## Usage Instructions
 
-## Installation
+### Prerequisites
 
-To install the dependencies, run:
+- Ensure you have a compatible environment that supports the CLI.
+- Familiarity with command-line interfaces.
 
-```bash
-pip install -r requirements.txt
-```
+### Installation
 
-## Usage
-
-### Creating a Swarm Agent
-
-To create a new Swarm agent, use the following command:
-
-```bash
-python cli/main.py create-swarm-agent "Your goal here" --output [json|python|print]
-```
-
-Replace `"Your goal here"` with the desired goal for the agent and choose the output format (`json`, `python`, or `print`).
-
-### Improving a Prompt
-
-To improve a prompt using OpenAI's API, use the following command:
+You can clone the repository or download the source code. Install required dependencies using:
 
 ```bash
-python cli/main.py improve-prompt "Your task or prompt here"
+# Requires Node.js and npm
+npm install
 ```
 
-Replace `"Your task or prompt here"` with the task or prompt you want to improve.
+### Basic Interaction
+
+SwarmAgentCLI is an interactive tool. Here are ways to interact with it:
+
+- **Creating an Agent**: Simply describe the goal of the agent you wish to create - for example, "Manage emails and notify me of important ones."
+  
+- **Designing a New Swarm**: Provide a goal for the swarm you want to design, like "Create a collaborative swarm of agents for data analysis."
+
+- **Generating or Improving a Prompt**: State the task for which you need a prompt refined or generated.
+
+- **Saving Output**: At any point, you can choose to save the data generated during your interaction, specifying a filename.
 
 ## Examples
 
-### Creating a Swarm Agent
+### Creating an Email Management Agent
 
-Example command to create a Swarm agent with a goal and output the Python code:
+When prompted, you might say: 
+"Create an agent that manages emails and notifies me of important ones."
 
-```bash
-python cli/main.py create-swarm-agent "Create a customer support agent" --output python
-```
+### Designing a Data Analysis Swarm
 
-### Improving a Prompt
+For swarm design:
+"Please design a swarm of agents that collaborates on data analysis tasks."
 
-Example command to improve a prompt:
+### Improving a Work Task Prompt
 
-```bash
-python cli/main.py improve-prompt "Improve the following prompt: 'Translate the following English text to French.'"
-```
-
-### Generating Prompts
-
-Example usage of the `generate_prompt` function in `cli/generate_prompt.py`:
-
-```python
-from cli.generate_prompt import generate_prompt
-
-task_or_prompt = "Improve the following prompt: 'Translate the following English text to French.'"
-generated_prompt = generate_prompt(task_or_prompt)
-print(generated_prompt)
-```
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request with your changes. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-This repository is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-
+To improve a prompt, you could input:
+"Help me refine the email management strategy for better user engagement."

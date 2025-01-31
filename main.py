@@ -1,60 +1,18 @@
-import argparse
-import json
-import logging
+from agents.agent_cli import agent_cli
+from helpers.run_loop import run_loop
 
-from agent_creator import create_python_agent_code, create_swarm_agent
-from generate_prompt import generate_prompt
-
-# The CLI entrypoint to create a swarm agent
-def create_swarm_agent_cmd(goal: str, model: str, output: str):
-    try:
-      json_response = create_swarm_agent(goal, model)
-      python_code = create_python_agent_code(json_response)
-
-      if output == "json":
-         print(json.dumps(json_response, indent=3))
-      elif output == "python":
-         print(python_code)
-      else:
-         print(python_code)
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
-        exit(1)
-
-# The CLI entrypoint to generate a prompt
-def generate_prompt_cmd(task_or_prompt: str, model: str = "o1-mini"):
-    try :
-        response = generate_prompt(task_or_prompt, model)
-        print(response)
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
-        exit(1)
-    
-
-def main():
-    parser = argparse.ArgumentParser(description="OpenAI Swarm Agent Manager")
-    subparsers = parser.add_subparsers(dest='command', help='Available commands')
-
-    # Create a new Swarm Agent
-    parser_swarm = subparsers.add_parser('create-swarm-agent', help='Create a new Swarm Agent')
-    parser_swarm.add_argument('goal', type=str, help='The goal of the agent')
-    parser_swarm.add_argument('--output', type=str, choices=['json', 'python'], default='python', help='Output format')
-    parser_swarm.add_argument('--model', type=str, default='o1-mini', help='Model to use for prompt generation')
-    parser_swarm.set_defaults(func=lambda args: create_swarm_agent_cmd(args.goal, args.model, args.output))
-
-    # Improve a prompt
-    parser_prompt = subparsers.add_parser('create-prompt', help='Create or improve a prompt')
-    group = parser_prompt.add_mutually_exclusive_group(required=True)
-    group.add_argument('--task', type=str, help='The task or prompt to improve')
-    group.add_argument('--task-file', type=argparse.FileType('r'), help='File containing the task or prompt')
-    parser_prompt.add_argument('--model', type=str, default='o1-mini', help='Model to use for prompt generation')
-    parser_prompt.set_defaults(func=lambda args: generate_prompt_cmd(args.task or args.task_file.read(), args.model))
-
-    args = parser.parse_args()
-    if args.command:
-        args.func(args)
-    else:
-        parser.print_help()
 
 if __name__ == "__main__":
-    main()
+    # Run the demo loop
+    output = ""
+    msg = """👋 Hello and welcome to the SwarmAgentCLI! 🚀 It's great to have you here.
+    I'm ready to help you with:
+    - Creating agents
+    - Designing swarms
+    - Generating or improving prompts
+
+    How would you like to begin? 🤖
+    
+    Btw, you can always type 'exit' to leave the CLI. 🚪
+    """
+    run_loop(agent_cli, welcomeMessage=msg, debug=True)

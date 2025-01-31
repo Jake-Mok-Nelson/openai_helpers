@@ -1,7 +1,7 @@
 import logging
 from openai import OpenAI
 
-from shared import is_pre_o1
+from helpers.is_pre_o1 import is_pre_o1
 
 client = OpenAI()
 

@@ -2,11 +2,10 @@ import json
 import logging
 from openai import OpenAI
 
-import generate_prompt
-from shared import is_pre_o1
+
+from functions.generate_prompt import generate_prompt
+from helpers.is_pre_o1 import is_pre_o1
 client = OpenAI()
-
-
 
 
 # Returns the new agent name and the Python code template
@@ -18,10 +17,7 @@ def create_python_agent_code(json_response):
    agent_functions = json_response.get("functions", [])
    agent_tool_choice = json_response.get("tool_choice", [])
    agent_parallel_tool_calls = json_response.get("parallel_tool_calls", False)
-   code_template = f"""from swarm import Agent, Swarm
-client = Swarm()
-
-my_agent = Agent(
+   code_template = f"""my_agent = Agent(
    name="{agent_name}",
    instructions="{agent_instructions}",
    model="{agent_model}",
@@ -29,6 +25,7 @@ my_agent = Agent(
    tool_choice={agent_tool_choice},
    parallel_tool_calls={agent_parallel_tool_calls}
 )
+
 """
    return code_template
 
@@ -92,7 +89,7 @@ response_format={
 
 # Create a new Swarm agent based on the user's goal
 # and output the agent details in the specified format
-def create_swarm_agent(goal: str, model: str = "o1-mini", output: str = "python"):
+def create_swarm_agent(goal: str, model: str = "o1-mini"):
    try:
       conversation = [
          {
@@ -276,15 +273,15 @@ Create an agent named "[AgentName]" using the "[Model]" model. Instructions: "[I
       And the following tools: """ + ", ".join(json_response["tool_choice"]) + """
       """
       
-      improved_prompt = generate_prompt.generate_prompt(agent_prompt_for_improvement, model)
+      improved_prompt = generate_prompt(agent_prompt_for_improvement, model)
       if not improved_prompt:
          logging.error("Failed to generate an improved prompt.")
          exit(1)
       
       # merge the json response with the improved prompt
       json_response['instructions'] = improved_prompt
-         
-      return json_response
+      
+      return create_python_agent_code(json_response)
    except Exception as e:
       print(f"An error occurred: {e}")
       exit(1)
