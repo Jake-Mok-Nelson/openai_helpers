@@ -1,1 +1,2 @@
 openai==1.60.2
+swarm @git+https://github.com/openai/swarm.git@main
